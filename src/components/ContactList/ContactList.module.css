@@ -13,6 +13,11 @@ span {
   margin-left: 30px;
 }
 
+.loaderWrap {
+  display: flex;
+  justify-content: center;
+}
+
 @media screen and (max-width: 480px) {
   .listContainer {
     width: 300px;

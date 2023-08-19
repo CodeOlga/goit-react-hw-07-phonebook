@@ -1,36 +1,43 @@
-import { useSelector } from 'react-redux';
-import { getFilter, getContacts } from 'redux/selectors';
-import ContactItem from 'components/ContactItem/ContactItem';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import {
+  selectFilteredContacts,
+  selectError,
+  selectIsLoading,
+} from 'redux/selectors';
+import ContactItem from '../ContactItem/ContactItem';
+import { fetchContacts } from 'redux/operations';
+import { Loader } from '../Loader/Loader';
 import css from './ContactList.module.css'
 
-const ContactList = () => {
-const filter = useSelector(getFilter);
-  const contacts = useSelector(getContacts);
+function ContactList() {
+  const filteredContacts = useSelector(selectFilteredContacts);
+  const error = useSelector(selectError);
+  const isLoading = useSelector(selectIsLoading);
 
-  const getFilteredContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name && contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  };
+  const dispatch = useDispatch();
 
-  const filteredContacts = getFilteredContacts();
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <ul className={css.listContainer}>
-      {filteredContacts.map(contact => (
-          <ContactItem
-          key={contact.id}
-          id={contact.id}
-          name={contact.name}
-          number={contact.number}
-      />
-      ))}
+      {isLoading && !error ? (
+        <div className={css.loaderWrap}>
+        <Loader/>
+        </div>
+      ) : filteredContacts.length === 0 && !error ? (
+        <p>The Phonebook is empty. Add your first contact. 🫤</p>
+      ) : (
+        filteredContacts.map(({ id, name, number }) => (
+          <ContactItem key={id} contact={{ id, name, number }} />
+        ))
+      )}
     </ul>
   );
 }
+
 export default ContactList;
-
-
 
 
