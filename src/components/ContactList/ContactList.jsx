@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import {
+  selectContacts,
   selectFilteredContacts,
   selectError,
   selectIsLoading,
@@ -12,6 +13,7 @@ import css from './ContactList.module.css'
 
 function ContactList() {
   const filteredContacts = useSelector(selectFilteredContacts);
+  const contacts = useSelector(selectContacts);
   const error = useSelector(selectError);
   const isLoading = useSelector(selectIsLoading);
 
@@ -27,7 +29,7 @@ function ContactList() {
         <div className={css.loaderWrap}>
         <Loader/>
         </div>
-      ) : filteredContacts.length === 0 && !error ? (
+      ) : contacts.length === 0 && !error ? (
         <p>The Phonebook is empty. Add your first contact. 🫤</p>
       ) : (
         filteredContacts.map(({ id, name, number }) => (
